@@ -1,0 +1,860 @@
+---
+// Mantener la interfaz simple para Astro
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<section class={`w-full pt-6 ${className}`}>
+  <!-- Header del gráfico -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">    <div class="mb-4 sm:mb-0">
+      <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 mb-2">Histórico de Precio - USDT/Bs</h2>
+      <div class="text-slate-600 text-sm">
+        <span id="data-range-info">Cargando datos...</span>
+      </div>
+    </div>
+      <!-- Botón para modal en mobile -->
+    <button id="mobile-chart-btn" class="lg:hidden flex items-center space-x-2 px-4 py-2.5 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors font-medium">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+      </svg>
+      <span>Ver en pantalla completa</span>
+    </button>
+  </div>  <!-- Controles principales -->
+  <div class="mb-6">    <!-- Controles básicos - siempre visibles -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">      <!-- Botones de período básicos -->
+      <div class="flex-1">
+        <div class="flex items-center space-x-3">
+          <span class="text-sm font-medium text-slate-600">Período:</span>
+          <div class="flex space-x-2">
+            <button class="view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400" data-view="diaria">24H</button>
+            <button class="view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-slate-700 text-white border-slate-700 shadow-sm hover:bg-slate-800" data-view="semanal">7D</button>
+            <button class="view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400" data-view="mensual">30D</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Controles según viewport -->
+      <div class="flex items-center space-x-3">        <!-- Botón de ajustes avanzados - Solo mobile -->
+        <div class="lg:hidden">
+          <button id="toggle-advanced" class="flex items-center space-x-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors text-sm font-medium">
+            <svg id="advanced-icon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+            <span>Ajustes Avanzados</span>
+          </button>
+        </div>
+        
+        <!-- Intervalos básicos - Solo desktop -->
+        <div class="hidden lg:flex items-center space-x-3">
+          <span class="text-sm font-medium text-slate-600">Intervalo:</span>
+          <div class="flex space-x-2">
+            <button class="interval-btn px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-slate-600 text-white border-slate-600 hover:bg-slate-700" data-interval="1h">1H</button>
+            <button class="interval-btn px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 hover:border-slate-400" data-interval="4h">4H</button>
+            <button class="interval-btn px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 hover:border-slate-400" data-interval="1d">1D</button>
+          </div>
+        </div>
+      </div>
+    </div>    <!-- Panel de ajustes avanzados -->
+    <div id="advanced-panel" class="hidden lg:block">
+      <!-- Mobile: Intervalos y controles avanzados -->
+      <div class="lg:hidden">
+        <div class="space-y-4">          <!-- Intervalos para mobile -->
+          <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <h4 class="text-sm font-semibold text-slate-700 mb-3">⏱️ Intervalos</h4>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="interval-btn px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-white text-slate-600 border-slate-300 hover:bg-slate-50" data-interval="15m">15m</button>
+              <button class="interval-btn px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-slate-600 text-white border-slate-600 hover:bg-slate-700" data-interval="1h">1H</button>
+              <button class="interval-btn px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-white text-slate-600 border-slate-300 hover:bg-slate-50" data-interval="4h">4H</button>
+              <button class="interval-btn px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-white text-slate-600 border-slate-300 hover:bg-slate-50" data-interval="1d">1D</button>
+            </div>
+          </div>
+          
+          <!-- Rango personalizado para mobile -->
+          <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <h4 class="text-sm font-semibold text-slate-700 mb-3">📅 Rango Personalizado</h4>
+            <div class="space-y-3">
+              <div>
+                <label for="start-date-mobile" class="block text-xs font-medium text-slate-600 mb-1">Desde:</label>
+                <input type="date" id="start-date-mobile" class="w-full px-3 py-2.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-slate-500 text-sm bg-white transition-colors" />
+              </div>
+              <div>
+                <label for="end-date-mobile" class="block text-xs font-medium text-slate-600 mb-1">Hasta:</label>
+                <input type="date" id="end-date-mobile" class="w-full px-3 py-2.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-slate-500 text-sm bg-white transition-colors" />
+              </div>              <button id="apply-date-range-mobile" class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Aplicar Rango</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>      <!-- Desktop: Rango personalizado -->
+      <div class="hidden lg:block">
+        <!-- Rango personalizado para desktop -->        <div class="p-5 bg-slate-50 rounded-lg border border-slate-200 w-full">
+          <h4 class="text-sm font-semibold text-slate-700 mb-4">📅 Rango Personalizado</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label for="start-date" class="block text-xs font-medium text-slate-600 mb-2">Desde:</label>
+                <input type="date" id="start-date" class="w-full px-3 py-2.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-slate-500 text-sm bg-white transition-colors" />
+              </div>
+              <div>
+                <label for="end-date" class="block text-xs font-medium text-slate-600 mb-2">Hasta:</label>
+                <input type="date" id="end-date" class="w-full px-3 py-2.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-slate-500 text-sm bg-white transition-colors" />
+              </div>            </div>
+            <button id="apply-date-range" class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Aplicar Rango</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- Indicadores de precio -->
+  <div class="mb-6 p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200">
+    <div class="flex items-center justify-center">
+      <!-- Cambio de precio principal -->
+      <div id="priceChange" class="flex items-center justify-center space-x-3">
+        <div class="animate-spin rounded-full w-5 h-5 border-2 border-slate-300 border-t-slate-600"></div>
+        <span class="text-slate-600">Cargando datos...</span>
+      </div>
+    </div>
+    
+    <!-- Estadísticas adicionales - Solo desktop -->
+    <div id="price-stats" class="hidden lg:block mt-4">
+      <div class="grid grid-cols-3 gap-4 text-sm">
+        <div class="text-center">
+          <div class="text-slate-500 text-xs font-medium uppercase tracking-wide">Máximo</div>
+          <div id="max-price" class="text-lg font-bold text-emerald-600">-</div>
+        </div>
+        <div class="text-center">
+          <div class="text-slate-500 text-xs font-medium uppercase tracking-wide">Mínimo</div>
+          <div id="min-price" class="text-lg font-bold text-red-600">-</div>
+        </div>
+        <div class="text-center">
+          <div class="text-slate-500 text-xs font-medium uppercase tracking-wide">Promedio</div>
+          <div id="avg-price" class="text-lg font-bold text-slate-600">-</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- Contenedor del gráfico principal -->
+  <div class="relative mb-4">    <div id="chart-container" class="w-full h-80 sm:h-96 lg:h-96 xl:h-[450px] relative bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
+      <div id="chart-loading" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-white">
+        <div class="animate-spin rounded-full w-8 h-8 border-3 border-slate-200 border-t-slate-600 mb-3"></div>
+        <p class="text-sm font-medium">Cargando datos del gráfico...</p>
+        <p class="text-xs text-slate-400 mt-1">Esto puede tomar unos segundos</p>
+      </div>
+    </div>
+  </div>
+  <!-- Leyenda del gráfico -->
+  <div class="flex items-center justify-center space-x-6 text-sm mb-4">
+    <div class="flex items-center space-x-2">
+      <div class="w-3 h-3 bg-slate-500 rounded-full"></div>
+      <span class="text-slate-600 font-medium">Precio de Compra</span>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+      <span class="text-slate-600 font-medium">Precio de Venta</span>
+    </div>
+  </div><!-- Modal para mobile -->
+  <div id="mobile-chart-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm modal-backdrop"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-[90vw] h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">        <!-- Header compacto -->
+        <div class="flex items-center justify-between p-3 border-b border-slate-200 bg-slate-50 flex-shrink-0">
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Gráfico USDT/Bs</h3>
+            <p class="text-xs text-slate-600">Rota el dispositivo para mejor visualización</p>
+          </div>
+          <button id="close-modal" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Contenedor de la gráfica - ocupa todo el espacio restante -->
+        <div class="flex-1 p-3 bg-white overflow-hidden">
+          <div id="mobile-chart-container" class="w-full h-full bg-white rounded-lg border border-slate-200"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module" is:inline>
+  import { createChart } from 'https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/+esm';
+  import Papa from 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm';
+
+  class AdvancedChartRate {
+    constructor() {
+      this.chart = null;
+      this.mobileChart = null;
+      this.rawData = [];
+      this.filteredData = [];      this.currentView = 'semanal'; // Cambiar default a semanal (7 días)
+      this.currentInterval = '1h'; // Cambiar default a 1 hora
+      this.customDateRange = null;
+      this.isMobile = window.innerWidth < 1024;
+      
+      this.init();
+    }
+
+    async init() {
+      try {
+        await this.loadData();
+        this.setupDateInputs();
+        this.createChart();
+        this.setupEventListeners();
+        this.updatePriceStats();
+        this.hideLoading();
+      } catch (error) {
+        console.error('Error initializing chart:', error);
+        this.showError('Error al cargar el gráfico');
+      }
+    }
+
+    // Funciones de utilidad (mantener la lógica original)
+    parseDate(str) {
+      const [d, m, y] = str.split(" ")[0].split("/").map(Number);
+      const [hh = 0, mm = 0] = str.split(" ")[1]?.split(":").map(Number) || [];
+      return new Date(y, m - 1, d, hh, mm);
+    }
+
+    formatDate(dateStr) {
+      const date = this.parseDate(dateStr);
+      return date.toLocaleString('es-BO', {
+        day: '2-digit', month: 'short', year: '2-digit',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    async loadData() {
+      let csvData;
+      if (sessionStorage.getItem("csvData")) {
+        csvData = JSON.parse(sessionStorage.getItem("csvData"));
+      } else {
+        const res = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vStWC7nikQErGZ0zcMbAbExgf7p1iPGB2xA55iH3kL02yOiRbb6UII9QfvrHhfmZMB0zQKWWpK0upE5/pub?output=csv");
+        const text = await res.text();
+        sessionStorage.setItem("csvData", JSON.stringify(text));
+        csvData = text;
+      }
+
+      const parsed = Papa.parse(csvData, { header: false, skipEmptyLines: true });
+      
+      this.rawData = parsed.data.map(r => ({
+        date: r[0],
+        usdtBuy: r[3]?.replace(",", "."),
+        usdtSell: r[4]?.replace(",", ".")
+      })).filter(r => r.date && !isNaN(r.usdtBuy) && !isNaN(r.usdtSell));
+
+      // Actualizar info de rango de datos
+      if (this.rawData.length > 0) {
+        const firstDate = this.parseDate(this.rawData[0].date);
+        const lastDate = this.parseDate(this.rawData[this.rawData.length - 1].date);
+        document.getElementById('data-range-info').textContent = 
+          `Datos disponibles: ${firstDate.toLocaleDateString('es-BO')} - ${lastDate.toLocaleDateString('es-BO')} (${this.rawData.length} registros)`;
+      }
+    }    setupDateInputs() {
+      if (this.rawData.length === 0) return;
+
+      const firstDate = this.parseDate(this.rawData[0].date);
+      const lastDate = this.parseDate(this.rawData[this.rawData.length - 1].date);
+      
+      // Configurar inputs de desktop
+      const startInput = document.getElementById('start-date');
+      const endInput = document.getElementById('end-date');
+      
+      // Configurar inputs de mobile
+      const startInputMobile = document.getElementById('start-date-mobile');
+      const endInputMobile = document.getElementById('end-date-mobile');
+      
+      const inputs = [startInput, endInput, startInputMobile, endInputMobile].filter(Boolean);
+      
+      inputs.forEach(input => {
+        input.min = firstDate.toISOString().split('T')[0];
+        input.max = lastDate.toISOString().split('T')[0];
+      });
+      
+      // Establecer valores por defecto (últimos 7 días)
+      const defaultStart = new Date(lastDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const defaultStartStr = defaultStart.toISOString().split('T')[0];
+      const defaultEndStr = lastDate.toISOString().split('T')[0];
+      
+      if (startInput) startInput.value = defaultStartStr;
+      if (endInput) endInput.value = defaultEndStr;
+      if (startInputMobile) startInputMobile.value = defaultStartStr;
+      if (endInputMobile) endInputMobile.value = defaultEndStr;
+    }
+
+    groupByInterval(rows, interval) {
+      const intervalMs = {
+        '15m': 15 * 60 * 1000,
+        '1h': 60 * 60 * 1000,
+        '4h': 4 * 60 * 60 * 1000,
+        '1d': 24 * 60 * 60 * 1000
+      }[interval] || 15 * 60 * 1000;
+
+      const groupedMap = new Map();
+
+      rows.forEach(r => {
+        const time = this.parseDate(r.date).getTime();
+        const rounded = Math.floor(time / intervalMs) * intervalMs;
+
+        if (!groupedMap.has(rounded)) groupedMap.set(rounded, []);
+        groupedMap.get(rounded).push({
+          buy: parseFloat(r.usdtBuy),
+          sell: parseFloat(r.usdtSell),
+          rawDate: r.date
+        });
+      });
+
+      return [...groupedMap.entries()].map(([timestamp, values]) => {
+        const avg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+        return {
+          time: Math.floor(timestamp / 1000),
+          rawDate: values[0].rawDate,
+          buy: parseFloat(avg(values.map(v => v.buy)).toFixed(4)),
+          sell: parseFloat(avg(values.map(v => v.sell)).toFixed(4)),
+        };
+      }).sort((a, b) => a.time - b.time);
+    }    filterDataByView(view) {
+      let filtered = [...this.rawData];
+
+      if (view === 'custom' && this.customDateRange) {
+        const { start, end } = this.customDateRange;
+        console.log('Aplicando rango personalizado:', { start, end });
+        
+        filtered = filtered.filter(r => {
+          const date = this.parseDate(r.date);
+          return date >= start && date <= end;
+        });
+        
+        console.log(`Datos filtrados: ${filtered.length} de ${this.rawData.length} registros`);
+      } else {
+        const now = new Date();
+        const cutoff = {
+          'diaria': new Date(now.getTime() - 24 * 60 * 60 * 1000),
+          'semanal': new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+          'mensual': new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        }[view];
+
+        if (cutoff) {
+          filtered = filtered.filter(r => this.parseDate(r.date) >= cutoff);
+        }
+      }
+
+      return this.groupByInterval(filtered, this.currentInterval);
+    }createChart(isModal = false) {
+      const containerId = isModal ? 'mobile-chart-container' : 'chart-container';
+      const container = document.getElementById(containerId);
+      
+      if (!container) return;
+
+      container.innerHTML = '';      const chart = createChart(container, {
+        width: container.offsetWidth,
+        height: isModal ? container.offsetHeight : (this.isMobile ? 320 : window.innerWidth > 1280 ? 450 : 384),
+        layout: { 
+          background: { color: '#ffffff' }, 
+          textColor: '#334155', // slate-700
+          fontSize: 12,
+          fontFamily: 'Inter, system-ui, sans-serif'
+        },
+        grid: { 
+          vertLines: { 
+            color: '#f1f5f9', // slate-100
+            style: 1,
+            visible: true,
+          }, 
+          horzLines: { 
+            color: '#f1f5f9', // slate-100
+            style: 1,
+            visible: true,
+          } 
+        },
+        timeScale: {
+          timeVisible: true,
+          secondsVisible: false,
+          rightOffset: this.isMobile ? 5 : 10,
+          barSpacing: this.isMobile ? 6 : 8,
+          fixLeftEdge: false,
+          fixRightEdge: false,
+          lockVisibleTimeRangeOnResize: true,
+          rightBarStaysOnScroll: true,
+          borderVisible: false,
+          borderColor: '#e5e7eb',
+          visible: !this.isMobile, // Ocultar escala de tiempo en mobile
+        },        rightPriceScale: {
+          borderVisible: false,
+          borderColor: '#cbd5e1', // slate-300
+          scaleMargins: {
+            top: 0.1,
+            bottom: 0.1,
+          },
+        },
+        leftPriceScale: {
+          visible: false,
+        },
+        handleScroll: { 
+          pressedMouseMove: !this.isMobile,
+          mouseWheel: true,
+          horzTouchDrag: this.isMobile,
+          vertTouchDrag: false,
+        },
+        handleScale: {
+          axisPressedMouseMove: {
+            time: true,
+            price: true,
+          },
+          mouseWheel: true,
+          pinch: this.isMobile,
+          axisDoubleClickReset: {
+            time: true,
+            price: true,
+          },
+        },        crosshair: {
+          mode: 1, // Normal crosshair
+          vertLine: {
+            width: 1,
+            color: '#64748b', // slate-500
+            style: 2, // Dashed
+            labelBackgroundColor: '#475569', // slate-600
+          },
+          horzLine: {
+            width: 1,
+            color: '#64748b', // slate-500
+            style: 2, // Dashed
+            labelBackgroundColor: '#475569', // slate-600
+          },
+        },
+      });
+
+      this.filteredData = this.filterDataByView(this.currentView);      const buyLine = chart.addLineSeries({ 
+        color: '#64748b', // slate-500 for a more sober look
+        lineWidth: this.isMobile ? 2 : 3, 
+        title: "Compra",
+        priceFormat: {
+          type: 'price',
+          precision: 4,
+          minMove: 0.0001,
+        },
+        crosshairMarkerVisible: true,
+        crosshairMarkerRadius: 4,
+        crosshairMarkerBorderColor: '#64748b',
+        crosshairMarkerBackgroundColor: '#ffffff',
+        lineStyle: 0, // Solid
+      });
+      
+      const sellLine = chart.addLineSeries({ 
+        color: '#dc2626', // red-600 for a more executive look
+        lineWidth: this.isMobile ? 2 : 3, 
+        title: "Venta",
+        priceFormat: {
+          type: 'price',
+          precision: 4,
+          minMove: 0.0001,
+        },
+        crosshairMarkerVisible: true,
+        crosshairMarkerRadius: 4,
+        crosshairMarkerBorderColor: '#dc2626',
+        crosshairMarkerBackgroundColor: '#ffffff',
+        lineStyle: 0, // Solid
+      });
+
+      buyLine.setData(this.filteredData.map(p => ({ time: p.time, value: p.buy })));
+      sellLine.setData(this.filteredData.map(p => ({ time: p.time, value: p.sell })));
+
+      // Configurar tooltip personalizado
+      this.setupTooltip(chart, container, isModal);
+
+      if (isModal) {
+        this.mobileChart = chart;
+      } else {
+        this.chart = chart;
+      }
+
+      // Ajustar vista inicial para mostrar todos los datos
+      if (this.filteredData.length > 0) {
+        const from = this.filteredData[0].time;
+        const to = this.filteredData[this.filteredData.length - 1].time;
+        chart.timeScale().setVisibleRange({ from, to });
+      }
+
+      // Resize handler
+      const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          chart.applyOptions({
+            width: entry.contentRect.width,
+            height: entry.contentRect.height,
+          });
+        }
+      });
+      
+      resizeObserver.observe(container);
+    }    setupTooltip(chart, container, isModal) {
+      const tooltipId = isModal ? 'mobile-tooltip' : 'chart-tooltip';
+      let tooltip = document.getElementById(tooltipId);
+
+      if (!tooltip) {
+        tooltip = document.createElement("div");
+        tooltip.id = tooltipId;
+        tooltip.style.cssText = `
+          position: absolute;
+          background: rgba(255, 255, 255, 0.98);
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          padding: 8px 12px;
+          font-size: 12px;
+          box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+          pointer-events: none;
+          z-index: 1000;
+          display: none;
+          backdrop-filter: blur(4px);
+          font-family: 'Inter', system-ui, sans-serif;
+          color: #374151;
+        `;
+        container.appendChild(tooltip);
+      }
+
+      chart.subscribeCrosshairMove(param => {
+        if (!param.time || !param.seriesData.size) {
+          tooltip.style.display = 'none';
+          return;
+        }
+
+        const time = param.time;
+        const point = this.filteredData.find(c => c.time === time);
+        if (!point) return;
+
+        const spread = (point.sell - point.buy).toFixed(4);        tooltip.innerHTML = `
+          <div style="font-weight: 600; color: #0f172a; margin-bottom: 4px; font-size: 11px;">
+            ${this.formatDate(point.rawDate)}
+          </div>
+          <div style="display: flex; gap: 12px; font-size: 11px;">
+            <div>
+              <span style="color: #64748b;">Compra:</span>
+              <span style="font-weight: 600; color: #64748b;">Bs ${point.buy.toFixed(4)}</span>
+            </div>
+            <div>
+              <span style="color: #64748b;">Venta:</span>
+              <span style="font-weight: 600; color: #dc2626;">Bs ${point.sell.toFixed(4)}</span>
+            </div>
+          </div>
+          <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">
+            Spread: Bs ${spread}
+          </div>
+        `;
+        
+        tooltip.style.display = 'block';
+        
+        // Posicionamiento inteligente del tooltip
+        const containerRect = container.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        
+        let left = param.point.x + 15;
+        let top = param.point.y - tooltipRect.height - 15;
+        
+        // Ajustar si se sale por la derecha
+        if (left + tooltipRect.width > containerRect.width) {
+          left = param.point.x - tooltipRect.width - 15;
+        }
+        
+        // Ajustar si se sale por arriba
+        if (top < 0) {
+          top = param.point.y + 15;
+        }
+        
+        // Ajustar si se sale por abajo
+        if (top + tooltipRect.height > containerRect.height) {
+          top = containerRect.height - tooltipRect.height - 10;
+        }
+        
+        tooltip.style.left = Math.max(10, left) + 'px';
+        tooltip.style.top = Math.max(10, top) + 'px';
+      });
+    }updatePriceStats() {
+      if (this.filteredData.length === 0) return;
+
+      const prices = this.filteredData.map(d => d.sell);
+      const max = Math.max(...prices);
+      const min = Math.min(...prices);
+      const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+
+      document.getElementById('max-price').textContent = `Bs ${max.toFixed(4)}`;
+      document.getElementById('min-price').textContent = `Bs ${min.toFixed(4)}`;
+      document.getElementById('avg-price').textContent = `Bs ${avg.toFixed(4)}`;
+
+      // Calcular cambio de precio
+      if (this.filteredData.length >= 2) {
+        const current = this.filteredData[this.filteredData.length - 1].sell;
+        const previous = this.filteredData[0].sell;
+        const change = ((current - previous) / previous) * 100;
+        const changeAbs = current - previous;        const changeElem = document.getElementById("priceChange");
+        const arrow = change > 0 ? "↗️" : change < 0 ? "↘️" : "➡️";
+        const colorClass = change > 0 ? "text-emerald-700 bg-emerald-50 border-emerald-200" :
+                          change < 0 ? "text-red-700 bg-red-50 border-red-200" :
+                          "text-slate-700 bg-slate-50 border-slate-200";changeElem.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <span class="text-lg">${arrow}</span>
+            <div class="text-sm">
+              <span class="font-bold">Bs ${current.toFixed(4)}</span>
+              <span class="block text-xs">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</span>
+            </div>
+          </div>
+        `;
+        changeElem.className = `px-3 py-2 rounded-lg font-medium border ${colorClass}`;}
+
+      // Solo mostrar estadísticas en desktop
+      if (window.innerWidth >= 1024) {
+        document.getElementById('price-stats').classList.remove('hidden');
+      }
+    }    setupEventListeners() {
+      // Toggle panel avanzado en mobile
+      document.getElementById('toggle-advanced')?.addEventListener('click', () => {
+        const panel = document.getElementById('advanced-panel');
+        const icon = document.getElementById('advanced-icon');
+        
+        if (panel.classList.contains('hidden')) {
+          panel.classList.remove('hidden');
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          panel.classList.add('hidden');
+          icon.style.transform = 'rotate(0deg)';
+        }
+      });      // Botones de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          this.currentView = btn.dataset.view;
+          this.updateActiveButton('.view-btn', btn);
+          this.updateChart();
+          
+          // Cerrar panel avanzado en mobile después de seleccionar
+          if (window.innerWidth < 1024) {
+            const panel = document.getElementById('advanced-panel');
+            const icon = document.getElementById('advanced-icon');
+            panel.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+          }
+        });
+      });      // Botones de intervalo
+      document.querySelectorAll('.interval-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          this.currentInterval = btn.dataset.interval;
+          this.updateActiveButton('.interval-btn', btn);
+          this.updateChart();
+          
+          // Cerrar panel avanzado en mobile después de seleccionar
+          if (window.innerWidth < 1024) {
+            const panel = document.getElementById('advanced-panel');
+            const icon = document.getElementById('advanced-icon');
+            panel.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+          }
+        });
+      });      // Aplicar rango de fechas personalizado
+      document.getElementById('apply-date-range')?.addEventListener('click', () => {
+        this.applyCustomDateRange('start-date', 'end-date');
+      });
+      
+      // Aplicar rango de fechas personalizado - Mobile
+      document.getElementById('apply-date-range-mobile')?.addEventListener('click', () => {
+        this.applyCustomDateRange('start-date-mobile', 'end-date-mobile');
+      });
+
+      // Modal para mobile
+      document.getElementById('mobile-chart-btn').addEventListener('click', () => {
+        this.openMobileModal();
+      });
+
+      document.getElementById('close-modal').addEventListener('click', () => {
+        this.closeMobileModal();
+      });      document.querySelector('.modal-backdrop')?.addEventListener('click', () => {
+        this.closeMobileModal();
+      });
+
+      // Responsive
+      window.addEventListener('resize', () => {
+        const wasMobile = this.isMobile;
+        this.isMobile = window.innerWidth < 1024;
+        
+        if (wasMobile !== this.isMobile) {
+          this.updateChart();
+        }
+      });
+
+      // Escape key para cerrar modal
+      document.addEventListener('keydown', (e) => {        if (e.key === 'Escape') {
+          this.closeMobileModal();
+        }
+      });
+    }    applyCustomDateRange(startDateId, endDateId) {
+      const startInput = document.getElementById(startDateId);
+      const endInput = document.getElementById(endDateId);
+      
+      if (!startInput || !endInput || !startInput.value || !endInput.value) {
+        alert('Por favor selecciona ambas fechas');
+        return;
+      }
+      
+      const startDate = new Date(startInput.value);
+      const endDate = new Date(endInput.value);
+      
+      // Ajustar las fechas para incluir todo el día
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+      
+      if (startDate && endDate && startDate <= endDate) {
+        this.customDateRange = { start: startDate, end: endDate };
+        this.currentView = 'custom';
+        
+        // Resetear todos los botones de vista y marcar que estamos usando rango personalizado
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.className = 'view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400';
+        });
+        
+        // Actualizar el gráfico con el nuevo rango
+        this.updateChart();
+        
+        // Mostrar feedback visual
+        const button = startDateId.includes('mobile') ? 
+          document.getElementById('apply-date-range-mobile') : 
+          document.getElementById('apply-date-range');
+        
+        if (button) {
+          const originalText = button.innerHTML;
+          button.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>¡Aplicado!</span>
+          `;
+          button.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+          button.classList.remove('bg-slate-700', 'hover:bg-slate-800');
+          
+          setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+            button.classList.add('bg-slate-700', 'hover:bg-slate-800');
+          }, 2000);
+        }
+        
+        // Cerrar panel avanzado en mobile después de aplicar
+        if (window.innerWidth < 1024) {
+          const panel = document.getElementById('advanced-panel');
+          const icon = document.getElementById('advanced-icon');
+          panel.classList.add('hidden');
+          icon.style.transform = 'rotate(0deg)';
+        }
+      } else {
+        alert('Por favor selecciona un rango de fechas válido (la fecha de inicio debe ser anterior o igual a la fecha final)');
+      }
+    }updateActiveButton(selector, activeBtn) {
+      document.querySelectorAll(selector).forEach(btn => {
+        if (selector === '.view-btn') {
+          // Estilos para botones básicos y avanzados
+          if (btn.closest('#advanced-panel')) {
+            // Botones en panel avanzado
+            btn.className = 'view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400';
+          } else {
+            // Botones básicos
+            btn.className = 'view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400';
+          }
+        } else if (selector === '.interval-btn') {
+          btn.className = 'interval-btn px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-white text-slate-600 border-slate-300 hover:bg-slate-50';
+        }
+      });
+      
+      if (selector === '.view-btn') {
+        if (activeBtn.closest('#advanced-panel')) {
+          // Botón activo en panel avanzado
+          activeBtn.className = 'view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-slate-700 text-white border-slate-700 shadow-sm hover:bg-slate-800';
+        } else {
+          // Botón activo básico
+          activeBtn.className = 'view-btn px-4 py-2.5 rounded-md font-medium text-sm transition-all duration-200 border bg-slate-700 text-white border-slate-700 shadow-sm hover:bg-slate-800';
+        }
+      } else if (selector === '.interval-btn') {
+        activeBtn.className = 'interval-btn px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 border bg-slate-600 text-white border-slate-600 hover:bg-slate-700';
+      }
+    }
+
+    updateChart() {
+      if (this.chart) {
+        this.createChart(false);
+        this.updatePriceStats();
+      }
+      if (this.mobileChart) {
+        this.createChart(true);
+      }
+    }    openMobileModal() {
+      const modal = document.getElementById('mobile-chart-modal');
+      const header = document.querySelector('header');
+      
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      // Ocultar header en móvil cuando se abre el modal
+      if (window.innerWidth < 1024 && header) {
+        header.style.transform = 'translateY(-100%)';
+        header.style.transition = 'transform 0.3s ease-in-out';
+      }
+      
+      // Crear gráfico en modal después de un pequeño delay para asegurar que el DOM esté listo
+      setTimeout(() => {
+        this.createChart(true);
+      }, 100);
+    }
+
+    closeMobileModal() {
+      const modal = document.getElementById('mobile-chart-modal');
+      const header = document.querySelector('header');
+      
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+      
+      // Mostrar header nuevamente cuando se cierre el modal
+      if (header) {
+        header.style.transform = 'translateY(0)';
+        header.style.transition = 'transform 0.3s ease-in-out';
+      }
+      
+      if (this.mobileChart) {
+        this.mobileChart.remove();
+        this.mobileChart = null;
+      }
+    }
+
+    hideLoading() {
+      const loading = document.getElementById('chart-loading');
+      if (loading) {
+        loading.style.display = 'none';
+      }
+    }    showError(message) {
+      const container = document.getElementById('chart-container');
+      container.innerHTML = `
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="text-center">
+            <div class="text-red-500 text-2xl mb-2">⚠️</div>
+            <p class="text-slate-600">${message}</p>
+            <button onclick="location.reload()" class="mt-3 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors">
+              Reintentar
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // Inicializar cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', () => {
+    new AdvancedChartRate();
+  });
+
+  // Limpiar cache al salir
+  window.addEventListener("beforeunload", () => {
+    sessionStorage.removeItem("csvData");
+  });
+</script>

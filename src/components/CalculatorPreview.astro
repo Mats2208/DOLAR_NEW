@@ -1,0 +1,497 @@
+---
+interface ExchangeData {
+  blue?: { sell: number }
+  official?: { sell: number }
+  [key: string]: { sell: number } | undefined
+}
+
+interface CurrencyCountryMap {
+  [key: string]: { code: string; symbol: string }
+}
+
+interface Props {
+  exchangeData: ExchangeData
+  usdToBobRate: number
+  currencyCountryMap: CurrencyCountryMap
+  lastUpdate: string
+}
+
+const { exchangeData, usdToBobRate, currencyCountryMap, lastUpdate } = Astro.props
+
+// Mapeo de monedas reales con sus datos de la API
+const availableCurrencies = [
+  { code: "USD", name: "Dólar Estadounidense", symbol: "$", apiKey: "blue" },
+  { code: "BOB", name: "Boliviano", symbol: "Bs", apiKey: null },
+  { code: "EUR", name: "Euro", symbol: "€", apiKey: "Euro" },
+  { code: "GBP", name: "Libra Esterlina", symbol: "£", apiKey: "Libra Esterlina" },
+  { code: "ARS", name: "Peso Argentino", symbol: "$", apiKey: "Peso Argentino" },
+  { code: "BRL", name: "Real Brasileño", symbol: "R$", apiKey: "Real Brasileño" },
+  { code: "PEN", name: "Sol Peruano", symbol: "S/", apiKey: "Sol Peruano" },
+  { code: "CNY", name: "Yuan Chino", symbol: "¥", apiKey: "Yuan Chino" },
+]
+---
+
+<div class="bg-gradient-to-br from-purple-50 via-white to-blue-50 p-4 sm:p-6 lg:p-8 rounded-2xl shadow-xl border border-purple-100 mb-8 relative overflow-hidden">
+  <!-- Decoración de fondo -->
+  <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full opacity-20 -translate-y-16 translate-x-16"></div>
+  <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-100 to-purple-100 rounded-full opacity-20 translate-y-12 -translate-x-12"></div>
+  
+  <div class="relative z-10">
+    <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-6">
+      <div class="flex items-center space-x-3">
+        <div class="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl shadow-sm">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Calculadora de Divisas</h3>
+          <p class="text-xs text-gray-600">Convierte entre diferentes monedas</p>
+        </div>
+      </div>
+      <div class="sm:ml-auto text-left sm:text-right">
+        <div class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          Bs {usdToBobRate.toFixed(2)}
+        </div>
+        <div class="text-xs text-gray-500">USD Blue</div>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 lg:gap-6">
+      <!-- Calculadora Principal -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+        <!-- Header -->
+        <div class="text-center mb-4 sm:mb-6">
+          <h4 class="text-base sm:text-lg font-bold text-gray-800 mb-2">Conversor</h4>
+          {lastUpdate && (
+            <div class="flex items-center justify-center space-x-2 text-xs text-gray-500 bg-gray-50 rounded-lg p-2">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="break-all">Actualizado: {lastUpdate}</span>
+            </div>
+          )}
+        </div>
+
+        <!-- From Currency -->
+        <div class="space-y-2 mb-4">
+          <label class="text-sm font-medium text-gray-700">Desde</label>
+          <div class="flex space-x-2">
+            <select id="fromCurrency" class="w-16 sm:w-20 px-1 sm:px-2 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+              {availableCurrencies.map((currency) => (
+                <option value={currency.code} selected={currency.code === "USD"}>{currency.code}</option>
+              ))}
+            </select>
+            <input
+              type="number"
+              id="fromAmount"
+              value="100"
+              placeholder="0.00"
+              class="flex-1 min-w-0 text-base sm:text-lg font-semibold px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            />
+          </div>
+          <div class="text-xs text-gray-500 truncate">
+            <span id="fromCurrencyName">Dólar Estadounidense</span>
+          </div>
+        </div>
+
+        <!-- Swap Button -->
+        <div class="flex justify-center mb-4">
+          <button
+            id="swapButton"
+            class="rounded-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 transition-all duration-200 p-2"
+          >
+            <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- To Currency -->
+        <div class="space-y-2 mb-4">
+          <label class="text-sm font-medium text-gray-700">Hacia</label>
+          <div class="flex space-x-2">
+            <select id="toCurrency" class="w-16 sm:w-20 px-1 sm:px-2 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+              {availableCurrencies.map((currency) => (
+                <option value={currency.code} selected={currency.code === "BOB"}>{currency.code}</option>
+              ))}
+            </select>
+            <input
+              type="number"
+              id="toAmount"
+              value="0"
+              placeholder="0.00"
+              class="flex-1 min-w-0 text-base sm:text-lg font-semibold px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50"
+            />
+          </div>
+          <div class="text-xs text-gray-500 truncate">
+            <span id="toCurrencyName">Boliviano</span>
+          </div>
+        </div>
+
+        <!-- Exchange Rate -->
+        <div class="bg-gray-50 rounded-lg p-3 text-center mb-4">
+          <div class="text-sm text-gray-600">Tasa de cambio</div>
+          <div id="exchangeRate" class="text-sm sm:text-base font-semibold text-gray-800 break-all">
+            1 USD = {usdToBobRate.toFixed(2)} BOB
+          </div>
+        </div>
+
+        <!-- Quick Amount Buttons -->
+        <div class="grid grid-cols-4 gap-1 mb-4">
+          {["10", "50", "100", "500"].map((amount) => (
+            <button
+              class="quick-amount text-xs px-1 sm:px-2 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+              data-amount={amount}
+            >
+              {amount}
+            </button>
+          ))}
+        </div>
+
+        <!-- Convert Button -->
+        <button
+          id="performConversion"
+          class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-2 rounded-lg transition-all duration-200 text-sm"
+        >
+          <span id="convertButtonText">Convertir</span>
+        </button>
+
+        <!-- Mobile History Toggle -->
+        <button
+          id="toggleHistoryMobile"
+          class="lg:hidden w-full mt-3 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Ver Historial</span>
+        </button>
+      </div>
+    </div>    <!-- Panel Lateral Desktop -->
+    <div class="lg:col-span-2">
+      <!-- Desktop History -->
+      <div class="hidden lg:block bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-gray-800">Historial de Conversiones</h4>
+        </div>
+        <div id="historyContent" class="space-y-3">
+          <div class="text-center py-6 text-gray-500">
+            <div class="text-3xl mb-2">📊</div>
+            <p class="text-sm">Realiza tu primera conversión para ver el historial</p>
+          </div>
+        </div>
+      </div>    </div>
+  </div>
+  </div> <!-- Cierre del div relativo z-10 -->
+</div> <!-- Cierre del div principal con decoración -->
+
+<!-- Mobile History Modal - Moved outside main container for proper z-index -->
+<div id="historyModal" class="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm hidden transition-all duration-300" style="z-index: 9999;">
+  <div class="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl max-h-[80vh] transition-all duration-300 transform translate-y-full" id="historyModalContent">
+    <div class="flex justify-between items-center p-4 border-b border-gray-100">
+      <h4 class="text-base sm:text-lg font-bold text-gray-800 flex items-center gap-2">
+        <div class="p-2 bg-green-100 rounded-lg">
+          <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <span>Historial de Conversiones</span>
+      </h4>
+      <button id="closeHistoryModal" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-4 overflow-y-auto" style="max-height: calc(80vh - 80px);">
+      <div id="historyContentMobile" class="space-y-3">
+        <div class="text-center py-8 text-gray-500">
+          <div class="text-3xl mb-2">📊</div>
+          <p class="text-sm">Realiza tu primera conversión para ver el historial</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ availableCurrencies, usdToBobRate, exchangeData }}>
+  // Variables globales
+  let conversionHistory = []
+  let isLoading = false
+
+  // Elementos del DOM
+  const fromCurrency = document.getElementById('fromCurrency')
+  const toCurrency = document.getElementById('toCurrency')
+  const fromAmount = document.getElementById('fromAmount')
+  const toAmount = document.getElementById('toAmount')
+  const fromCurrencyName = document.getElementById('fromCurrencyName')
+  const toCurrencyName = document.getElementById('toCurrencyName')
+  const exchangeRate = document.getElementById('exchangeRate')
+  const swapButton = document.getElementById('swapButton')
+  const performConversion = document.getElementById('performConversion')
+  const convertButtonText = document.getElementById('convertButtonText')
+  const historyContent = document.getElementById('historyContent')
+  const historyContentMobile = document.getElementById('historyContentMobile')
+  const toggleHistoryMobile = document.getElementById('toggleHistoryMobile')
+  const historyModal = document.getElementById('historyModal')
+  const historyModalContent = document.getElementById('historyModalContent')
+  const closeHistoryModal = document.getElementById('closeHistoryModal')
+
+  // Función para obtener tasa de cambio usando datos reales de la API
+  function getExchangeRate(from, to) {
+    // USD a BOB usando tasa blue
+    if (from === "USD" && to === "BOB") {
+      return usdToBobRate
+    }
+    
+    // BOB a USD
+    if (from === "BOB" && to === "USD") {
+      return 1 / usdToBobRate
+    }
+
+    // USD a otras monedas usando datos de la API
+    if (from === "USD") {
+      const toCurrencyInfo = availableCurrencies.find(c => c.code === to)
+      if (toCurrencyInfo?.apiKey && exchangeData[toCurrencyInfo.apiKey]) {
+        return exchangeData[toCurrencyInfo.apiKey].sell
+      }
+    }
+
+    // Otras monedas a USD (inverso)
+    if (to === "USD") {
+      const fromCurrencyInfo = availableCurrencies.find(c => c.code === from)
+      if (fromCurrencyInfo?.apiKey && exchangeData[fromCurrencyInfo.apiKey]) {
+        return 1 / exchangeData[fromCurrencyInfo.apiKey].sell
+      }
+    }
+
+    // Conversiones indirectas a través de USD
+    if (from !== "USD" && to !== "USD") {
+      const fromToUsd = getExchangeRate(from, "USD")
+      const usdToTo = getExchangeRate("USD", to)
+      return fromToUsd * usdToTo
+    }
+
+    // Conversiones BOB a otras monedas
+    if (from === "BOB") {
+      const bobToUsd = 1 / usdToBobRate
+      const usdToTo = getExchangeRate("USD", to)
+      return bobToUsd * usdToTo
+    }
+
+    // Otras monedas a BOB
+    if (to === "BOB") {
+      const fromToUsd = getExchangeRate(from, "USD")
+      return fromToUsd * usdToBobRate
+    }
+
+    return 1
+  }
+
+  // Función para calcular conversión
+  function calculateConversion(amount, from, to) {
+    if (!amount || amount === "0") return "0"
+    const numAmount = parseFloat(amount)
+    if (isNaN(numAmount)) return "0"
+
+    const rate = getExchangeRate(from, to)
+    const result = numAmount * rate
+    return result.toFixed(6).replace(/\.?0+$/, "")
+  }
+
+  // Función para actualizar nombres de monedas
+  function updateCurrencyNames() {
+    const fromCode = fromCurrency.value
+    const toCode = toCurrency.value
+    
+    const fromInfo = availableCurrencies.find(c => c.code === fromCode)
+    const toInfo = availableCurrencies.find(c => c.code === toCode)
+    
+    fromCurrencyName.textContent = fromInfo?.name || fromCode
+    toCurrencyName.textContent = toInfo?.name || toCode
+    
+    const rate = getExchangeRate(fromCode, toCode)
+    exchangeRate.textContent = `1 ${fromCode} = ${rate.toFixed(6).replace(/\.?0+$/, "")} ${toCode}`
+  }
+
+  // Función para manejar cambio en cantidad origen
+  function handleFromAmountChange() {
+    const converted = calculateConversion(fromAmount.value, fromCurrency.value, toCurrency.value)
+    toAmount.value = converted
+  }
+
+  // Función para manejar cambio en cantidad destino
+  function handleToAmountChange() {
+    const converted = calculateConversion(toAmount.value, toCurrency.value, fromCurrency.value)
+    fromAmount.value = converted
+  }
+
+  // Función para intercambiar monedas
+  function swapCurrencies() {
+    if (isLoading) return
+    
+    isLoading = true
+    swapButton.querySelector('svg').classList.add('animate-spin')
+    
+    setTimeout(() => {
+      const tempCurrency = fromCurrency.value
+      const tempAmount = fromAmount.value
+
+      fromCurrency.value = toCurrency.value
+      toCurrency.value = tempCurrency
+      fromAmount.value = toAmount.value
+      toAmount.value = tempAmount
+
+      updateCurrencyNames()
+      
+      swapButton.querySelector('svg').classList.remove('animate-spin')
+      isLoading = false
+    }, 300)
+  }
+  // Función para renderizar historial
+  function renderHistory() {
+    const content = conversionHistory.length === 0 ? `
+      <div class="text-center py-6 text-gray-500">
+        <div class="text-3xl mb-2">📊</div>
+        <p class="text-sm">Realiza tu primera conversión para ver el historial</p>
+      </div>
+    ` : conversionHistory.map(conversion => `
+      <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+            <div class="text-sm font-semibold text-gray-700 break-all">
+              ${conversion.fromAmount} ${conversion.from}
+            </div>
+            <svg class="w-3 h-3 text-gray-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+            </svg>
+            <div class="text-sm font-semibold text-gray-700 break-all">
+              ${conversion.toAmount} ${conversion.to}
+            </div>
+          </div>
+          <div class="text-left sm:text-right">
+            <div class="text-xs text-gray-500 truncate">Tasa: ${conversion.rate}</div>
+            <div class="text-xs text-gray-400">${conversion.timestamp}</div>
+          </div>
+        </div>
+      </div>
+    `).join('')
+
+    if (historyContent) historyContent.innerHTML = content
+    if (historyContentMobile) historyContentMobile.innerHTML = content
+  }
+
+  // Función para realizar conversión
+  function performConversionAction() {
+    if (isLoading) return
+
+    const rate = getExchangeRate(fromCurrency.value, toCurrency.value).toFixed(6).replace(/\.?0+$/, "")
+    const newConversion = {
+      from: fromCurrency.value,
+      to: toCurrency.value,
+      fromAmount: fromAmount.value,
+      toAmount: toAmount.value,
+      rate: rate,
+      timestamp: new Date().toLocaleTimeString('es-BO')
+    }
+
+    conversionHistory = [newConversion, ...conversionHistory.slice(0, 4)]
+    renderHistory()
+
+    // Simular procesamiento
+    isLoading = true
+    convertButtonText.innerHTML = `
+      <div class="flex items-center justify-center space-x-2">
+        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        <span>Convirtiendo...</span>
+      </div>
+    `
+
+    setTimeout(() => {
+      convertButtonText.textContent = 'Convertir'
+      isLoading = false
+    }, 1000)
+  }
+
+  // Event listeners
+  fromCurrency?.addEventListener('change', () => {
+    updateCurrencyNames()
+    handleFromAmountChange()
+  })
+
+  toCurrency?.addEventListener('change', () => {
+    updateCurrencyNames()
+    handleFromAmountChange()
+  })
+
+  fromAmount?.addEventListener('input', handleFromAmountChange)
+  toAmount?.addEventListener('input', handleToAmountChange)
+  swapButton?.addEventListener('click', swapCurrencies)
+  performConversion?.addEventListener('click', performConversionAction)
+
+  // Quick amount buttons
+  document.querySelectorAll('.quick-amount').forEach(button => {
+    button.addEventListener('click', () => {
+      fromAmount.value = button.dataset.amount
+      handleFromAmountChange()
+    })
+  })
+  // Mobile history modal
+  toggleHistoryMobile?.addEventListener('click', () => {
+    if (historyModal) {
+      historyModal.classList.remove('hidden')
+      // Forzar el reflow para que la animación funcione
+      historyModal.offsetHeight
+      requestAnimationFrame(() => {
+        if (historyModalContent) {
+          historyModalContent.classList.remove('translate-y-full')
+        }
+      })
+      // Prevenir scroll del body
+      document.body.style.overflow = 'hidden'
+    }
+  })
+
+  closeHistoryModal?.addEventListener('click', () => {
+    closeModal()
+  })
+
+  function closeModal() {
+    if (historyModalContent) {
+      historyModalContent.classList.add('translate-y-full')
+    }
+    setTimeout(() => {
+      if (historyModal) {
+        historyModal.classList.add('hidden')
+      }
+      // Restaurar scroll del body
+      document.body.style.overflow = ''
+    }, 300)
+  }
+
+  historyModal?.addEventListener('click', (e) => {
+    if (e.target === historyModal) {
+      closeModal()
+    }
+  })
+
+  // Cerrar modal con escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && historyModal && !historyModal.classList.contains('hidden')) {
+      closeModal()
+    }
+  })
+
+  // Inicializar
+  updateCurrencyNames()
+  renderHistory()
+</script>

@@ -1,0 +1,48 @@
+---
+const { pageUrl, usdToBobRate, currentDateTime, logoUrl } = Astro.props;
+const [date, time] = currentDateTime.split(',');
+---
+
+<!-- Contenedor principal centrado y elegante -->
+<div class="w-full max-w-xl mx-auto p-6 sm:p-8 text-center text-gray-800 bg-white" style="border: none; box-shadow: none;">
+  <!-- Logo -->
+  <div class="flex justify-center mb-4">
+    <img src={logoUrl || "/placeholder.svg"} alt="Logo" class="h-12 object-contain" crossorigin="anonymous" loading="eager" />
+  </div>
+
+  <!-- Título -->
+  <h1 class="text-3xl sm:text-4xl font-extrabold mb-4">Cotización del Día</h1>
+
+  <!-- URL -->
+  <div class="flex justify-center items-center gap-2 text-blue-600 text-sm sm:text-base mb-6">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M13.828 10.172a4 4 0 010 5.656l-1.414 1.414a4 4 0 01-5.656-5.656l1.414-1.414M10.172 13.828a4 4 0 010-5.656l1.414-1.414a4 4 0 015.656 5.656l-1.414 1.414"/>
+    </svg>
+    <span>{pageUrl}</span>
+  </div>
+
+  <!-- Valor actual -->
+  <div class="mb-6">
+    <p class="text-lg text-gray-600 mb-1">USDT en Bs:</p>
+    <p class="text-4xl font-bold">{usdToBobRate}</p>
+  </div>
+
+  <!-- Fecha y hora -->
+  <div class="flex justify-center items-center gap-6 text-gray-600 text-sm sm:text-base">
+    <div class="flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M8 7V3M16 7V3M4 11h16M5 20h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" />
+      </svg>
+      <span>{date}</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{time}</span>
+    </div>
+  </div>
+</div>

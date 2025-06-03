@@ -1,0 +1,21 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CalculatorPreview from '../components/CalculatorPreview.astro';
+import ExchangeRates from '../components/ExchangeRates.astro';
+import '../styles/global.css';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dólar Blue Bolivia</title>
+    <meta name="description" content="Cotización diaria del dólar blue en Bolivia. Actualizado al instante.">
+    <meta name="robots" content="index, follow">
+  </head>
+  <body class="bg-gray-100 text-gray-900 font-sans">
+    <Header />
+    <ExchangeRates />
+  </body>
+</html>
