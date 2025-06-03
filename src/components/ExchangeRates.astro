@@ -29,7 +29,7 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
 });
 ---
 
-<section class="bg-gradient-to-br from-white via-blue-50 to-white py-20 mt-16">
+<section id = "ExchangeRates" class="bg-gray-50 py-20 mt-16">
   <div class="container mx-auto px-4 lg:px-6">
     <div class="grid lg:grid-cols-2 gap-8 xl:gap-12 items-center text-center lg:text-left mb-16">
       <!-- Información principal -->
@@ -148,7 +148,7 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
     </div>
 
     <!-- Separador visual -->
-    <div class="mt-12 mb-8">
+    <div id = "CalculadoraPreview" class="mt-12 mb-8">
       <div class="flex items-center justify-center">
         <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
         <div class="px-6">
@@ -165,9 +165,8 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
         <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
       </div>
     </div>
-
-    <!-- Calculadora de Divisas -->
-    <CalculatorPreview 
+    
+    <CalculatorPreview  
       exchangeData={exchangeData}
       usdToBobRate={usdToBobRate}
       currencyCountryMap={currencyCountryMap}

@@ -1,0 +1,111 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+---
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacto - Dólar Blue Bolivia</title>
+  </head>
+  <body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">    <Header />
+    <main class="flex-1 max-w-4xl mx-auto px-4 py-8 mt-20">
+      <!-- Header Section -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+          Contacto
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Estamos aquí para ayudarte. Contáctanos para cualquier consulta, sugerencia o información adicional.
+        </p>
+      </div>
+
+      <!-- Contact Card -->
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+          <h2 class="text-2xl font-semibold text-white mb-2">¿Necesitas ayuda?</h2>
+          <p class="text-blue-100">Nos pondremos en contacto contigo lo antes posible</p>
+        </div>
+        
+        <div class="px-8 py-8">
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- Contact Info -->
+            <div class="space-y-6">
+              <div class="flex items-start space-x-4">
+                <div class="bg-blue-100 p-3 rounded-lg">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 mb-1">Correo Electrónico</h3>
+                  <p class="text-gray-600 text-sm mb-2">Respuesta en 24-48 horas</p>
+                  <a href="mailto:captaindisrupt2208@protonmail.com" class="text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                    captaindisrupt2208@protonmail.com
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div class="bg-green-100 p-3 rounded-lg">
+                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 mb-1">Horario de Atención</h3>
+                  <p class="text-gray-600 text-sm">Lunes a Viernes</p>
+                  <p class="text-gray-600 text-sm">9:00 AM - 6:00 PM (GMT-4)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Reasons -->
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-4">¿En qué podemos ayudarte?</h3>
+              <div class="space-y-3">
+                <div class="flex items-center space-x-3">
+                  <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span class="text-gray-700">Consultas sobre cotizaciones</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span class="text-gray-700">Reportar errores técnicos</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span class="text-gray-700">Sugerencias de mejora</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span class="text-gray-700">Información sobre API</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span class="text-gray-700">Colaboraciones comerciales</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA Section -->
+          <div class="mt-8 pt-6 border-t border-gray-200">
+            <div class="bg-gray-50 rounded-lg p-6 text-center">
+              <h4 class="font-semibold text-gray-900 mb-2">¿Prefieres escribirnos directamente?</h4>
+              <p class="text-gray-600 text-sm mb-4">Haz clic en el botón para abrir tu cliente de correo</p>
+              <a href="mailto:captaindisrupt2208@protonmail.com?subject=Consulta desde Dólar Blue Bolivia" 
+                 class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                Enviar Correo
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>
