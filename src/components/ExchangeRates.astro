@@ -191,9 +191,8 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-      </div>
-      
-      <div id="capture-content" class="p-4 lg:p-6 bg-gray-50 flex-1 overflow-auto">
+      </div>      
+      <div id="capture-content" class="p-4 lg:p-6 bg-gray-50 flex-1 overflow-hidden">
         <LayoutSnapshot
           pageUrl="https://www.dolarbluebolivia.click"
           usdToBobRate={usdToBobRate}
@@ -201,7 +200,6 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
           logoUrl={logo.src}
         />
       </div>
-      
       <div class="p-4 lg:p-6 border-t border-blue-100 bg-white flex-shrink-0">
         <div class="flex flex-col space-y-4">
           <div class="grid grid-cols-3 gap-2">
@@ -258,14 +256,27 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
     closeBtn?.addEventListener('click', closeModal);
     modal?.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
-    });
-
-    // Función para descargar imagen
+    });    // Función para descargar imagen
     const downloadImage = async (format) => {
       if (!captureTarget || !domtoimage) return;
 
       try {
         status.textContent = `Generando ${format.toUpperCase()}...`;
+        
+        // Guardamos el estilo original
+        const originalOverflow = document.body.style.overflow;
+        // Evitar scroll durante la captura
+        document.body.style.overflow = 'hidden';
+        
+        // Preparar el elemento para la captura
+        const originalStyles = {
+          overflow: captureTarget.style.overflow,
+          maxHeight: captureTarget.style.maxHeight
+        };
+        
+        // Eliminar las propiedades que causan el scroll
+        captureTarget.style.overflow = 'visible';
+        captureTarget.style.maxHeight = 'none';
         
         // Configuración común
         const options = {
@@ -277,7 +288,9 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
             transform: 'scale(2)',
             transformOrigin: 'top left',
             width: captureTarget.offsetWidth + 'px',
-            height: captureTarget.offsetHeight + 'px'
+            height: captureTarget.offsetHeight + 'px',
+            overflow: 'visible',
+            maxHeight: 'none'
           }
         };
 
@@ -311,14 +324,23 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
         document.body.removeChild(link);
 
         status.textContent = `${format.toUpperCase()} descargado exitosamente`;
-        
-        setTimeout(() => {
+          setTimeout(() => {
           status.textContent = '';
         }, 3000);
+        
+        // Restaurar los estilos originales
+        document.body.style.overflow = originalOverflow;
+        captureTarget.style.overflow = originalStyles.overflow;
+        captureTarget.style.maxHeight = originalStyles.maxHeight;
 
       } catch (error) {
         console.error(`Error generando ${format}:`, error);
         status.textContent = `Error generando ${format.toUpperCase()}`;
+        
+        // Asegurarse de restaurar los estilos originales incluso en caso de error
+        document.body.style.overflow = originalOverflow;
+        captureTarget.style.overflow = originalStyles.overflow;
+        captureTarget.style.maxHeight = originalStyles.maxHeight;
         
         setTimeout(() => {
           status.textContent = '';

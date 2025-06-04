@@ -3,120 +3,39 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 ---
+
 <html lang="es">
   <head>
+    <link rel="icon" href="/Logo.png" type="image/png" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sobre Nosotros - Dólar Blue Bolivia</title>
+    <meta name="description" content="Conoce más sobre Dólar Blue Bolivia, tu fuente confiable para las cotizaciones del dólar paralelo en Bolivia. Información actualizada y precisa para tus decisiones financieras." />
+    <meta name="keywords" content="Dólar Blue Bolivia, dólar paralelo, cotización dólar Bolivia, tipo de cambio, mercado informal, economía Bolivia" />
   </head>
-  <body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">    <Header />
-    <main class="flex-1 max-w-6xl mx-auto px-4 py-8 mt-20">
-      <!-- Hero Section -->
-      <div class="text-center mb-16">
-        <h1 class="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-          Sobre Nosotros
-        </h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          Somos la plataforma líder en información del mercado paralelo de divisas en Bolivia, 
-          comprometidos con la transparencia y la precisión de datos financieros.
+  <body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-1 max-w-4xl mx-auto px-4 py-8 mt-20">      <article class="max-w-3xl mx-auto px-6 py-10">
+        <div class="flex items-center mb-8">
+          <img src="/src/img/Logo.png" alt="Logo Dólar Blue Bolivia" class="h-12 w-auto mr-4" />
+          <h1 class="text-3xl font-bold">Sobre Nosotros</h1>
+        </div>
+        <p class="text-base text-gray-800 whitespace-pre-line mb-4">
+          Nuestro objetivo es proporcionar datos precisos y en tiempo real para ayudarte a tomar decisiones financieras informadas. Entendemos la importancia de contar con información veraz en un mercado cambiante, por lo que nos dedicamos a ofrecerte las últimas cotizaciones y análisis del mercado informal de divisas en Bolivia.
+        </p>        <p class="text-base text-gray-800 whitespace-pre-line">
+          Creemos en la transparencia y en el acceso a información económica confiable como pilares fundamentales para el desarrollo de nuestra sociedad. Trabajamos diariamente para brindarte el mejor servicio posible, siendo tu aliado en la comprensión de las tendencias económicas que afectan a todos los bolivianos.
         </p>
-      </div>
-
-      <!-- Mission & Vision Cards -->
-      <div class="grid md:grid-cols-2 gap-8 mb-16">
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-          <div class="bg-blue-100 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Nuestra Misión</h2>
-          <p class="text-gray-600 leading-relaxed">
-            Proporcionar información precisa, actualizada y confiable sobre el mercado paralelo de divisas en Bolivia, 
-            ayudando a usuarios y empresas a tomar decisiones financieras informadas en un entorno económico dinámico.
+        
+        <div class="mt-10">
+          <h2 class="text-2xl font-semibold mb-4 text-blue-800">Nuestra Misión</h2>
+          <p class="text-base text-gray-800 whitespace-pre-line mb-4">
+            Nuestra misión es proporcionar información precisa, actualizada y accesible sobre el mercado cambiario boliviano, especialmente enfocados en el dólar paralelo o "blue". Buscamos empoderar a los ciudadanos con conocimientos económicos que les permitan tomar decisiones financieras acertadas en su día a día.
+          </p>
+          <p class="text-base text-gray-800 whitespace-pre-line">
+            Nos comprometemos a mantener la objetividad y veracidad en todos nuestros contenidos, siendo un reflejo fiel de la realidad económica de Bolivia, siempre con la intención de contribuir positivamente al bienestar financiero de nuestra comunidad.
           </p>
         </div>
-
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-          <div class="bg-green-100 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-            </svg>
-          </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Nuestra Visión</h2>
-          <p class="text-gray-600 leading-relaxed">
-            Ser la plataforma de referencia más confiable para la información del mercado paralelo de divisas en Bolivia, 
-            democratizando el acceso a datos financieros de calidad para todos los sectores de la sociedad.
-          </p>
-        </div>
-      </div>
-
-      <!-- Features Section -->
-      <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-8 md:p-12 mb-16">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">¿Por qué confiar en nosotros?</h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">
-            Nos distinguimos por nuestro compromiso con la calidad de información y la transparencia en el mercado financiero boliviano.
-          </p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="text-center">
-            <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">Datos Verificados</h3>
-            <p class="text-gray-600">
-              Información recopilada de múltiples fuentes confiables y verificada constantemente para garantizar precisión.
-            </p>
-          </div>
-
-          <div class="text-center">
-            <div class="bg-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">Actualización Continua</h3>
-            <p class="text-gray-600">
-              Monitoreo 24/7 del mercado para ofrecer las cotizaciones más actuales del dólar paralelo y oficial.
-            </p>
-          </div>
-
-          <div class="text-center">
-            <div class="bg-purple-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">Transparencia Total</h3>
-            <p class="text-gray-600">
-              Sin costos ocultos, sin registro requerido. Información financiera accesible para todos los bolivianos.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Commitment Section -->
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 md:p-12">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl font-bold text-gray-900 mb-6">Nuestro Compromiso</h2>
-          <p class="text-lg text-gray-600 leading-relaxed mb-8">
-            Entendemos la importancia de contar con información financiera precisa en el contexto económico boliviano. 
-            Por eso, nos comprometemos a mantener los más altos estándares de calidad en nuestros datos, 
-            respetando siempre la privacidad de nuestros usuarios y proporcionando un servicio completamente gratuito.
-          </p>
-          <div class="bg-amber-50 border border-amber-200 rounded-lg p-6">
-            <p class="text-amber-800 font-medium">
-              <strong>Importante:</strong> Esta plataforma es únicamente informativa. No ofrecemos servicios de cambio 
-              ni intermediamos operaciones financieras. Toda la información es de carácter referencial.
-            </p>
-          </div>
-        </div>
-      </div>
+      </article>
     </main>
     <Footer />
   </body>

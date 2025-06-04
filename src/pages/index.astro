@@ -6,15 +6,88 @@ import ExchangeRates from '../components/ExchangeRates.astro';
 import Limites from '../components/Limites.astro';
 import '../styles/global.css';
 ---
-
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dólar Blue Bolivia</title>
-    <meta name="description" content="Cotización diaria del dólar blue en Bolivia. Actualizado al instante.">
-    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="/Logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/Logo.png" />
+
+    <title>Cotización del Dólar Blue en Bolivia - Actualización de Tasa de Cambio</title>
+    <meta
+      name="description"
+      content="Consulta la cotización del dólar blue en Bolivia en tiempo real. Obtén la tasa de cambio oficial y del mercado paralelo actualizada cada día."
+    />
+    <meta
+      name="keywords"
+      content="Dólar Blue, Bolivia, Cotización, Cambio, Dólar Oficial, Tasa de Cambio, Finanzas Bolivia, Precio del Dólar, Noticias Financieras Bolivia"
+    />
+    <meta name="author" content="Dólar Blue Bolivia" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+    <meta name="theme-color" content="#000000" />
+
+    <meta
+      property="og:title"
+      content="Cotización del Dólar Blue en Bolivia - Actualización de Tasa de Cambio"
+    />
+    <meta
+      property="og:description"
+      content="Consulta la cotización del dólar blue y oficial en Bolivia en tiempo real. Información actualizada y confiable para el mercado financiero boliviano."
+    />
+    <meta property="og:image" content="https://www.dolarbluebolivia.click/Logo.png" />
+    <meta property="og:url" content="https://www.dolarbluebolivia.click/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Cotización del Dólar Blue en Bolivia - Actualización de Tasa de Cambio"
+    />
+    <meta
+      name="twitter:description"
+      content="Consulta la cotización del dólar blue en Bolivia en tiempo real. Obtén la tasa de cambio oficial y del mercado paralelo actualizada."
+    />
+    <meta name="twitter:image" content="https://www.dolarbluebolivia.click/Logo.png" />
+    <meta name="twitter:site" content="@dolarbluebolivia" />
+    <meta name="twitter:creator" content="@dolarbluebolivia" />
+
+    <link rel="canonical" href="https://www.dolarbluebolivia.click/" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <meta
+      name="google-site-verification"
+      content="TuecWaFQyJa7ZiPJ4_UczVQEjv8w5rFFZ31Fh9JF2gg"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://www.dolarbluebolivia.click",
+        "name": "Cotización del Dólar Blue en Bolivia",
+        "description":
+          "Consulta la cotización del dólar blue y oficial en Bolivia en tiempo real. Información confiable y actualizada.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Dólar Blue Bolivia",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.dolarbluebolivia.click/dollar_bolivia.png"
+          }
+        },
+        "image": "https://www.dolarbluebolivia.click/dollar_bolivia.png",
+        "sameAs": [
+          "https://www.facebook.com/dolarbluebolivia",
+          "https://twitter.com/dolarbluebolivia"
+        ]
+      }
+    </script>
   </head>
+
   <body class="bg-gray-50 text-gray-900 font-sans">
     <Header />
     <ExchangeRates />

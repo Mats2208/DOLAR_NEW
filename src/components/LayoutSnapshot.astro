@@ -4,10 +4,15 @@ const [date, time] = currentDateTime.split(',');
 ---
 
 <!-- Contenedor principal centrado y elegante -->
-<div class="w-full max-w-xl mx-auto p-6 sm:p-8 text-center text-gray-800 bg-white" style="border: none; box-shadow: none;">
-  <!-- Logo -->
-  <div class="flex justify-center mb-4">
-    <img src={logoUrl || "/placeholder.svg"} alt="Logo" class="h-12 object-contain" crossorigin="anonymous" loading="eager" />
+<div class="w-full max-w-xl mx-auto p-6 sm:p-8 text-center text-gray-800 bg-white" style="border: none; box-shadow: none; overflow: hidden;">  <!-- Logo -->
+  <div class="flex justify-center mb-5">
+    <img 
+      src={logoUrl || "/placeholder.svg"} 
+      alt="Logo" 
+      class="h-16 object-contain rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300" 
+      crossorigin="anonymous" 
+      loading="eager" 
+    />
   </div>
 
   <!-- Título -->
