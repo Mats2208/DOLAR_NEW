@@ -26,11 +26,10 @@ const [date, time] = currentDateTime.split(',');
     </svg>
     <span>{pageUrl}</span>
   </div>
-
   <!-- Valor actual -->
   <div class="mb-6">
     <p class="text-lg text-gray-600 mb-1">USDT en Bs:</p>
-    <p class="text-4xl font-bold">{usdToBobRate}</p>
+    <p id="snapshot-rate" class="text-4xl font-bold">{usdToBobRate || "Cargando..."}</p>
   </div>
 
   <!-- Fecha y hora -->
@@ -40,14 +39,14 @@ const [date, time] = currentDateTime.split(',');
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M8 7V3M16 7V3M4 11h16M5 20h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" />
       </svg>
-      <span>{date}</span>
+      <span id="snapshot-date">{date || "Cargando..."}</span>
     </div>
     <div class="flex items-center gap-1">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <span>{time}</span>
+      <span id="snapshot-time">{time || "Cargando..."}</span>
     </div>
   </div>
 </div>

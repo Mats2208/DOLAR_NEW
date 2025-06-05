@@ -3,30 +3,6 @@ import LayoutSnapshot from '../components/LayoutSnapshot.astro';
 import logo from '../img/logo.png';
 import ChartRate from './ChartRate.astro';
 import CalculatorPreview from './CalculatorPreview.astro';
-
-const response = await fetch("https://www.dolarbluebolivia.click/api/exchange_currencies");
-const exchangeData = await response.json();
-const usdToBobRate = exchangeData.blue?.sell ?? 11;
-
-const currencyCountryMap: Record<string, { code: string; symbol: string }> = {
-  "Euro": { code: "EU", symbol: "EUR" },
-  "Libra Esterlina": { code: "GB", symbol: "GBP" },
-  "Peso Argentino": { code: "AR", symbol: "ARS" },
-  "Real Brasileño": { code: "BR", symbol: "BRL" },
-  "Sol Peruano": { code: "PE", symbol: "PEN" },
-  "Yuan Chino": { code: "CN", symbol: "CNY" },
-  "blue": { code: "US", symbol: "USD" },
-  "official": { code: "US", symbol: "USD" },
-};
-
-const currentDateTime = new Date().toLocaleString('es-BO', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit'
-});
 ---
 
 <section id = "ExchangeRates" class="bg-gray-50 py-20 mt-16">
@@ -40,9 +16,8 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
             <span class="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
               Paralela
             </span>
-          </h1>
-          <div class="text-6xl sm:text-7xl lg:text-6xl xl:text-7xl font-extrabold text-blue-600 mb-6">
-            Bs {usdToBobRate.toFixed(2)}
+          </h1>          <div id="usdRate" class="text-6xl sm:text-7xl lg:text-6xl xl:text-7xl font-extrabold text-blue-600 mb-6">
+            Cargando...
           </div>
           <p class="text-lg sm:text-xl lg:text-lg text-gray-600 max-w-md mx-auto lg:mx-0 mb-8 lg:mb-0">
             Precio del dólar en el mercado paralelo boliviano, actualizado en tiempo real
@@ -73,7 +48,7 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
               </svg>
               <span class="font-medium">Última actualización</span>
             </div>
-            <p class="text-gray-800 font-semibold">{currentDateTime}</p>
+            <p id="lastUpdated" class="text-gray-800 font-semibold">Cargando...</p>
           </div>
 
           <button
@@ -107,39 +82,8 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
               <th class="px-4 py-4 text-center text-gray-700 font-semibold text-sm lg:text-base">1 USD equivale a:</th>
               <th class="px-4 py-4 text-center text-gray-700 font-semibold text-sm lg:text-base">1 Unidad en BOB</th>
             </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            {
-              Object.entries(exchangeData)
-                .filter(([key]) => key !== "blue" && key !== "official")
-                .map(([currency, values]: [string, any]) => {
-                  const country = currencyCountryMap[currency] || { code: "XX", symbol: currency };
-                  const flagUrl = `https://flagcdn.com/w40/${country.code.toLowerCase()}.webp`;
-                  const sell = values.sell;
-                  const currencyValue = `${sell.toFixed(currency === "Peso Argentino" ? 4 : 2)} ${country.symbol}`;
-                  const valueInBob = (usdToBobRate / sell).toFixed(currency === "Peso Argentino" ? 4 : 2);
-                  return (
-                    <tr class="hover:bg-blue-50 transition-colors duration-200">
-                      <td class="px-4 py-4">
-                        <div class="flex items-center space-x-3">
-                          <img src={flagUrl || "/placeholder.svg"} alt={`Bandera de ${currency}`} class="w-8 h-6 object-cover rounded border border-gray-200 shadow-sm" />
-                          <span class="text-sm lg:text-base font-medium text-gray-800">{currency}</span>
-                        </div>
-                      </td>
-                      <td class="px-4 py-4 text-center">
-                        <span class="text-sm lg:text-base font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
-                          {currencyValue}
-                        </span>
-                      </td>
-                      <td class="px-4 py-4 text-center">
-                        <span class="text-sm lg:text-base font-bold text-green-600 bg-green-50 px-3 py-1 rounded-lg">
-                          Bs {valueInBob}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })
-            }
+          </thead>          <tbody id="foreignRates" class="divide-y divide-gray-100">
+            <!-- Contenido generado dinámicamente por JavaScript -->
           </tbody>
         </table>
       </div>
@@ -165,12 +109,11 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
         <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
       </div>
     </div>
-    
-    <CalculatorPreview  
-      exchangeData={exchangeData}
-      usdToBobRate={usdToBobRate}
-      currencyCountryMap={currencyCountryMap}
-      lastUpdate={currentDateTime}
+      <CalculatorPreview  
+      exchangeData={{}}
+      usdToBobRate={0}
+      currencyCountryMap={{}}
+      lastUpdate=""
     />
   </div>
 
@@ -192,11 +135,10 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
           </svg>
         </button>
       </div>      
-      <div id="capture-content" class="p-4 lg:p-6 bg-gray-50 flex-1 overflow-hidden">
-        <LayoutSnapshot
+      <div id="capture-content" class="p-4 lg:p-6 bg-gray-50 flex-1 overflow-hidden">        <LayoutSnapshot
           pageUrl="https://www.dolarbluebolivia.click"
-          usdToBobRate={usdToBobRate}
-          currentDateTime={currentDateTime}
+          usdToBobRate={0}
+          currentDateTime=""
           logoUrl={logo.src}
         />
       </div>
@@ -210,8 +152,164 @@ const currentDateTime = new Date().toLocaleString('es-BO', {
           <div id="status" class="text-sm text-gray-500 text-center min-h-[20px]"></div>
         </div>
       </div>
-    </div>
-  </div>
+    </div>  </div>
+
+<script type="module" is:inline>
+  // Client-side data fetching and UI population
+  document.addEventListener('DOMContentLoaded', async () => {
+    const currencyCountryMap = {
+      "Euro": { code: "EU", symbol: "EUR" },
+      "Libra Esterlina": { code: "GB", symbol: "GBP" },
+      "Peso Argentino": { code: "AR", symbol: "ARS" },
+      "Real Brasileño": { code: "BR", symbol: "BRL" },
+      "Sol Peruano": { code: "PE", symbol: "PEN" },
+      "Yuan Chino": { code: "CN", symbol: "CNY" },
+      "blue": { code: "US", symbol: "USD" },
+      "official": { code: "US", symbol: "USD" },
+    };
+
+    try {
+      // Fetch exchange data
+      console.log('Fetching exchange data...');
+      const response = await fetch("https://www.dolarbluebolivia.click/api/exchange_currencies");
+      const exchangeData = await response.json();
+      console.log('Exchange data received:', exchangeData);
+      const usdToBobRate = exchangeData.blue?.sell ?? 11;
+      console.log('USD to BOB rate:', usdToBobRate);
+
+      // Format current date/time in Bolivia timezone
+      const currentDateTime = new Date().toLocaleString('es-BO', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      // Update USD rate display
+      const usdRateElement = document.getElementById('usdRate');
+      console.log('USD rate element found:', usdRateElement);
+      if (usdRateElement) {
+        usdRateElement.textContent = `Bs ${usdToBobRate.toFixed(2)}`;
+        console.log('USD rate updated to:', usdRateElement.textContent);
+      }
+
+      // Update last updated time
+      const lastUpdatedElement = document.getElementById('lastUpdated');
+      console.log('Last updated element found:', lastUpdatedElement);
+      if (lastUpdatedElement) {
+        lastUpdatedElement.textContent = currentDateTime;
+        console.log('Last updated time set to:', currentDateTime);
+      }
+
+      // Update foreign currencies table
+      const foreignRatesElement = document.getElementById('foreignRates');
+      if (foreignRatesElement) {
+        const foreignCurrencies = Object.entries(exchangeData)
+          .filter(([key]) => key !== "blue" && key !== "official");
+
+        foreignRatesElement.innerHTML = foreignCurrencies
+          .map(([currency, values]) => {
+            const country = currencyCountryMap[currency] || { code: "XX", symbol: currency };
+            const flagUrl = `https://flagcdn.com/w40/${country.code.toLowerCase()}.webp`;
+            const sell = values.sell;
+            const currencyValue = `${sell.toFixed(currency === "Peso Argentino" ? 4 : 2)} ${country.symbol}`;
+            const valueInBob = (usdToBobRate / sell).toFixed(currency === "Peso Argentino" ? 4 : 2);
+
+            return `
+              <tr class="hover:bg-blue-50 transition-colors duration-200">
+                <td class="px-4 py-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="${flagUrl}" alt="Bandera de ${currency}" class="w-8 h-6 object-cover rounded border border-gray-200 shadow-sm" />
+                    <span class="text-sm lg:text-base font-medium text-gray-800">${currency}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-center">
+                  <span class="text-sm lg:text-base font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
+                    ${currencyValue}
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-center">
+                  <span class="text-sm lg:text-base font-bold text-green-600 bg-green-50 px-3 py-1 rounded-lg">
+                    Bs ${valueInBob}
+                  </span>
+                </td>
+              </tr>
+            `;
+          })
+          .join('');
+      }      // Update LayoutSnapshot in modal if it exists
+      const captureContent = document.getElementById('capture-content');
+      if (captureContent) {
+        // Update LayoutSnapshot component elements
+        const layoutSnapshotRate = captureContent.querySelector('#snapshot-rate');
+        if (layoutSnapshotRate) {
+          layoutSnapshotRate.textContent = `Bs ${usdToBobRate.toFixed(2)}`;
+        }
+
+        const layoutSnapshotDate = captureContent.querySelector('#snapshot-date');
+        if (layoutSnapshotDate) {
+          const [date] = currentDateTime.split(',');
+          layoutSnapshotDate.textContent = date.trim();
+        }
+
+        const layoutSnapshotTime = captureContent.querySelector('#snapshot-time');
+        if (layoutSnapshotTime) {
+          const parts = currentDateTime.split(',');
+          if (parts.length > 1) {
+            layoutSnapshotTime.textContent = parts[1].trim();
+          }
+        }
+      }      // Dispatch custom event for other components to listen to
+      window.dispatchEvent(new CustomEvent('exchangeDataLoaded', {
+        detail: {
+          data: exchangeData,
+          usdToBobRate: usdToBobRate,
+          lastUpdate: currentDateTime,
+          currencyCountryMap: currencyCountryMap
+        }
+      }));
+
+      // Store data globally for other components to access
+      window.exchangeRateData = {
+        exchangeData,
+        usdToBobRate,
+        currentDateTime,
+        currencyCountryMap
+      };
+
+      console.log('Exchange data loaded successfully');
+
+    } catch (error) {
+      console.error('Error fetching exchange data:', error);
+      
+      // Show error state
+      const usdRateElement = document.getElementById('usdRate');
+      if (usdRateElement) {
+        usdRateElement.textContent = 'Error';
+        usdRateElement.classList.add('text-red-500');
+      }
+      
+      const lastUpdatedElement = document.getElementById('lastUpdated');
+      if (lastUpdatedElement) {
+        lastUpdatedElement.textContent = 'Error al cargar datos';
+        lastUpdatedElement.classList.add('text-red-500');
+      }
+
+      const foreignRatesElement = document.getElementById('foreignRates');
+      if (foreignRatesElement) {
+        foreignRatesElement.innerHTML = `
+          <tr>
+            <td colspan="3" class="px-4 py-8 text-center text-red-500">
+              Error al cargar las cotizaciones. Por favor, recarga la página.
+            </td>
+          </tr>
+        `;
+      }
+    }
+  });
+</script>
 
 <script type="module" is:inline>
   document.addEventListener('DOMContentLoaded', async () => {

@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   server: {
-    port: 4321,
+    port: 3000,
     host: '0.0.0.0'
   },
   vite: {
